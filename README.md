@@ -1,5 +1,5 @@
 # pdf-index
-Index pdf files (find the page numbers where the words of a PDF document appear).
+Index pdf files (for every word in PDF document, find the page numbers where it appears).
 
 ## Console Application Usage
 * `--input` or `-i` - The path to the pdf
