@@ -10,6 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Thibaud on 28-05-16.
@@ -40,13 +42,27 @@ public class IndexCreator {
 
         for (int i = 1; i <= n; i++) {
             System.out.println("Indexing page " + i + " of " + n + "...");
-            String textFromPage = PdfTextExtractor.getTextFromPage(reader, i);//Extracting the content from a particular page.
-            String[] words = StringUtils.split(textFromPage);
+            final String textFromPage = PdfTextExtractor.getTextFromPage(reader, i);//Extracting the content from a particular page.
+
+            // Find the actual page number
+            Pattern pattern = Pattern.compile("Page [0-9]+");
+            Matcher matcher = pattern.matcher(textFromPage);
+            int pageNumber = -1;
+            if (matcher.find())
+            {
+                int i1 = matcher.groupCount();
+                String group = matcher.group(i1);
+                String pageNumberStr = group.replace("Page ", "");
+                pageNumber = Integer.parseInt(pageNumberStr);
+            }
+
+            // Populate the map with each word
+            final String[] words = StringUtils.split(textFromPage);
 
             for (String word : words) {
                 word = this.sanatize(word);
                 if (word.length() > 1 && textFromPage.contains(word)) {
-                    map.put(word, i);
+                    map.put(word, pageNumber);
                 }
             }
         }

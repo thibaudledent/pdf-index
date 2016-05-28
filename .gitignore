@@ -1,3 +1,7 @@
+.idea
+pinapple-pdf.iml
+target/
+
 *.class
 
 # Mobile Tools for Java (J2ME)
