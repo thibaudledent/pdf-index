@@ -43,24 +43,21 @@ public class IndexCreator {
         for (int i = 1; i <= n; i++) {
             System.out.println("Indexing page " + i + " of " + n + "...");
             final String textFromPage = PdfTextExtractor.getTextFromPage(reader, i);//Extracting the content from a particular page.
-
             // Find the actual page number
             //Pattern pattern = Pattern.compile("- [0-9]+ -");
-            Pattern pattern = Pattern.compile("Page [0-9]+");
+            Pattern pattern = Pattern.compile("Page [0-9]+");
             Matcher matcher = pattern.matcher(textFromPage);
             int pageNumber = -1;
-            if (matcher.find())
-            {
+            if (matcher.find()) {
                 int i1 = matcher.groupCount();
                 String group = matcher.group(i1);
                 //String pageNumberStr = group.replaceAll("- ([0-9]+) -", "$1");
-                String pageNumberStr = group.replace("Page", "");
+                String pageNumberStr = group.replace("Page ", "");
                 pageNumber = Integer.parseInt(pageNumberStr);
             }
 
             // Populate the map with each word
-            final String[] words = StringUtils.split(textFromPage);
-
+            final String[] words = StringUtils.split(textFromPage, " ");
             for (String word : words) {
                 word = this.sanatize(word);
                 if (word.length() > 1 && textFromPage.contains(word)) {
@@ -69,7 +66,11 @@ public class IndexCreator {
             }
         }
 
-        System.out.println(map.toString());
+        String output = map.toString();
+        output = output.substring(1, output.length() - 2);
+        output = output.replaceAll(Pattern.quote("], "), "\n");
+        output = output.replaceAll(Pattern.quote("=["), "@");
+        System.out.println(output);
     }
 
     private String sanatize(String word) {
@@ -78,13 +79,13 @@ public class IndexCreator {
         // change "l'administration" to "adminisatration"
         int i = word.indexOf("'");
         if (i != -1) {
-            word = word.substring(i+1);
+            word = word.substring(i + 1);
         }
 
         // change "l’administration" to "adminisatration"
         int j = word.indexOf("’");
         if (j != -1) {
-            word = word.substring(j+1);
+            word = word.substring(j + 1);
         }
 
         word = word.replace("\"", "");
@@ -96,6 +97,14 @@ public class IndexCreator {
         word = word.replace(":", "");
         word = word.replace("=", "");
         word = word.replace("«", "");
+        word = word.replace("»", "");
+        word = word.replace("“", "");
+        word = word.replace("”", "");
+        word = word.replace("…", "");
+        word = word.replace("○", "");
+        word = word.replace("●", "");
+        word = word.replace("■", "");
+
         word = word.replaceAll("[\\p{Cc}\\p{Cf}\\p{Co}\\p{Cn}]", "");
 
         // if it contains only numbers
