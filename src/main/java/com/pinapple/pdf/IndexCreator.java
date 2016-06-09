@@ -45,6 +45,7 @@ public class IndexCreator {
             final String textFromPage = PdfTextExtractor.getTextFromPage(reader, i);//Extracting the content from a particular page.
 
             // Find the actual page number
+            //Pattern pattern = Pattern.compile("- [0-9]+ -");
             Pattern pattern = Pattern.compile("Page [0-9]+");
             Matcher matcher = pattern.matcher(textFromPage);
             int pageNumber = -1;
@@ -52,7 +53,8 @@ public class IndexCreator {
             {
                 int i1 = matcher.groupCount();
                 String group = matcher.group(i1);
-                String pageNumberStr = group.replace("Page ", "");
+                //String pageNumberStr = group.replaceAll("- ([0-9]+) -", "$1");
+                String pageNumberStr = group.replace("Page", "");
                 pageNumber = Integer.parseInt(pageNumberStr);
             }
 
@@ -79,6 +81,12 @@ public class IndexCreator {
             word = word.substring(i+1);
         }
 
+        // change "l’administration" to "adminisatration"
+        int j = word.indexOf("’");
+        if (j != -1) {
+            word = word.substring(j+1);
+        }
+
         word = word.replace("\"", "");
         word = word.replace(".", "");
         word = word.replace("(", "");
@@ -87,6 +95,7 @@ public class IndexCreator {
         word = word.replace(";", "");
         word = word.replace(":", "");
         word = word.replace("=", "");
+        word = word.replace("«", "");
         word = word.replaceAll("[\\p{Cc}\\p{Cf}\\p{Co}\\p{Cn}]", "");
 
         // if it contains only numbers
@@ -97,15 +106,4 @@ public class IndexCreator {
 
         return word.trim();
     }
-
-/*    private String extractTextFromAllPages(final PdfReader reader, final int n) throws IOException {
-        StringBuilder builder = new StringBuilder();
-
-        for (int i = 1; i <= n; i++) {
-            String textFromPage = PdfTextExtractor.getTextFromPage(reader, i);//Extracting the content from a particular page.
-            builder.append(textFromPage);
-        }
-
-        return builder.toString();
-    }*/
 }
