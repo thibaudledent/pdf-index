@@ -9,6 +9,6 @@ Example:
 
 ### Process the output of the main()
 * Copy paste the output of the `main()` in an Excel sheet:
-![excel-image](https://dl.dropboxusercontent.com/u/22987083/pdf-index.png)
+![excel-image](https://raw.githubusercontent.com/thibaudledent/pdf-index/master/pdf-index.png)
 * Choose `@` as a delimiter
 * Filter the words
